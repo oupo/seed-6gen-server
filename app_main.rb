@@ -37,11 +37,14 @@ post '/post' do
     "invalid iv1"
   elsif params[:iv0] == "0-0-0-0-0-0" && params[:iv0] == "0-0-0-0-0-0"
     "iv must not be default value"
+  elsif not (comments = Comment.where(iv0: params[:iv0], iv1: params[:iv1])).empty?
+    "iv is equal to No.#{comments[0].id}"
   else
     Comment.create({
       iv0: params[:iv0],
       iv1: params[:iv1],
       game_time: params[:game_time]
+      ip_addr: request.ip
     })
     "ok"
   end

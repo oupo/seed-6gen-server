@@ -18,14 +18,40 @@ after do
   ActiveRecord::Base.connection.close
 end
 
-get '/' do
-  @comments = Comment.order('id desc')
-  erb :index
-end
-
 def check_iv(str)
   m = /\A\d+-\d+-\d+-\d+-\d+-\d+/.match(str)
   m && str.scan(/\d+/).map{|x| x.to_i }.all?{|x| 0 <= x && x < 32 }
+end
+
+def iv_to_habscd(iv)
+  [iv[0], iv[1], iv[2], iv[5], iv[3], iv[4]]
+end
+
+def judge_answer(iv0, iv1, seed)
+  iv0 = iv_to_habscd(iv0)
+  iv1 = iv_to_habscd(iv1)
+  mt = Random.new(seed)
+  rand = []
+  m = 1000
+  n = 10000
+  n.times do |i|
+    rand[i] = (mt.rand(2**32) * 32) >> 32
+  end
+  (m - 6).times do |i|
+    if rand[i, 6] == iv0
+      ((i + 6)...(n - 6)).each do |j|
+        if rand[j, 6] == iv1
+          return true
+        end
+      end
+    end
+  end
+  false
+end
+
+get '/' do
+  @comments = Comment.order('id desc')
+  erb :index
 end
 
 post '/post' do
@@ -50,26 +76,6 @@ post '/post' do
   end
 end
 
-def judge_answer(iv0, iv1, seed)
-  mt = Random.new(seed)
-  rand = []
-  m = 1000
-  n = 10000
-  n.times do |i|
-    rand[i] = (mt.rand(2**32) * 32) >> 32
-  end
-  (m - 6).times do |i|
-    if rand[i, 6] == iv0
-      ((i + 6)...(n - 6)).each do |j|
-        if rand[j, 6] == iv1
-          return true
-        end
-      end
-    end
-  end
-  false
-end
-
 post '/answer' do
   if /\A\d+\z/ !~ params[:id] || /\A[0-9a-f]{8}\z/ !~ params[:seed]
     "ng"
@@ -92,4 +98,15 @@ post '/answer' do
       end
     end
   end
+end
+
+get "/list" do
+  content_type :text
+  Comment.where(answer: nil).map {|comment|
+    {
+      id: comment.id,
+      iv0: iv_to_habscd(comment.iv0.scan(/\d+/).map(&:to_i)),
+      iv1: iv_to_habscd(comment.iv1.scan(/\d+/).map(&:to_i)),
+    }
+  }.to_json
 end

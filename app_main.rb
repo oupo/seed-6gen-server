@@ -27,12 +27,12 @@ end
 post '/comment' do  
   Comment.create({
     body: params[:body],
-    user_name: params[:user_id]
+    user_id: params[:user_id]
   })
 end
 
 get '/comments/last' do
   content_type :json
   comment = Comment.last
-  {comment_body: comment.body, user_id: comment.user_name}.to_json
+  {comment_body: comment.body, user_id: comment.user_id}.to_json
 end

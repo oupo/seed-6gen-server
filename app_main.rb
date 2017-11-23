@@ -29,7 +29,7 @@ def check_iv(str)
 end
 
 post '/post' do
-  if /\A20\d{2}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}\z/ !~ params[:game_time]
+  if /\A20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\z/ !~ params[:game_time]
     "invalid game_time"
   elsif not check_iv(params[:iv0])
     "invalid iv0"

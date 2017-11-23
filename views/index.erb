@@ -10,7 +10,7 @@
     <p><%= escape_html "No.#{comment.id} 投稿時刻: #{comment.created_at} 起動時刻: #{comment.game_time} 個体値0: #{comment.iv0} 個体値1: #{comment.iv1} 見つかったseed: #{comment.answer or "未検索または見つからない"}" %></p>
   <% end %>
   <form action="/post" method="post">
-  <p>起動時刻: <input type="text" name="game_time" value="2017/11/23 21:43:00">
+  <p>起動時刻: <input type="text" name="game_time" value="2017-11-23 21:43:00">
   <p>個体値0: <input type="text" name="iv0" value="0-0-0-0-0-0">
   <p>個体値1: <input type="text" name="iv1" value="0-0-0-0-0-0">
   <p><input type="submit" value="投稿">

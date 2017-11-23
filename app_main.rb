@@ -43,7 +43,7 @@ post '/post' do
     Comment.create({
       iv0: params[:iv0],
       iv1: params[:iv1],
-      game_time: params[:game_time]
+      game_time: params[:game_time],
       ip_addr: request.ip
     })
     "ok"

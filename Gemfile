@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
-gem "sqlite3"
 gem "sinatra"
 gem "activerecord"
+gem "sinatra-activerecord"
+gem "rake"
 
-git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+group :production do
+  gem "pg"
+end
 
-# gem "rails"
+group :development, :test do
+  gem "sqlite3"
+end

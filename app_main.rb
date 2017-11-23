@@ -1,12 +1,15 @@
 require 'sinatra'
-require 'sqlite3'
 require 'active_record'
 require 'json'
 
-ActiveRecord::Base.establish_connection(
-  "adapter" => "sqlite3",
-  "database" => "./db/bbs.db"
-)
+if ENV['DATABASE_URL']
+  ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+else
+  ActiveRecord::Base.establish_connection(
+    "adapter" => "sqlite3",
+    "database" => "app.db"
+  )
+end
 
 class Comment < ActiveRecord::Base
 end

@@ -4,6 +4,6 @@ create table comments(
   iv1 text,
   game_time text,
   answer text,
-  ip_addr,
+  ip_addr text,
   created_at
 );

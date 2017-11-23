@@ -49,3 +49,47 @@ post '/post' do
     "ok"
   end
 end
+
+def judge_answer(iv0, iv1, seed)
+  mt = Random.new(seed)
+  rand = []
+  m = 1000
+  n = 10000
+  n.times do |i|
+    rand[i] = (mt.rand(2**32) * 32) >> 32
+  end
+  (m - 6).times do |i|
+    if rand[i, 6] == iv0
+      ((i + 6)...(n - 6)).each do |j|
+        if rand[j, 6] == iv1
+          return true
+        end
+      end
+    end
+  end
+  false
+end
+
+post '/answer' do
+  if /\A\d+\z/ !~ params[:id] || /\A[0-9a-f]{8}\z/ !~ params[:seed]
+    "ng"
+  else
+    id = params[:id].to_i
+    seed = params[:seed].to_i(16)
+    comments = Comment.where(id: id)
+    if comments.size != 1
+      "ng"
+    else
+      comment = comments[0]
+      iv0 = comment.iv0.scan(/\d+/).map(&:to_i)
+      iv1 = comment.iv1.scan(/\d+/).map(&:to_i)
+      if judge_answer(iv0, iv1, seed)
+        comment.answer = "%08x" % seed
+        comment.save
+        "ok"
+      else
+        "incorrect"
+      end
+    end
+  end
+end

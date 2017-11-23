@@ -18,7 +18,7 @@
   <script>
   document.getElementById("current-time").addEventListener("click", function (e) {
     let date = new Date();
-    document.forms.form.game_time.value = date.getFullYear() + "-" + fill(date.getMonth()) + "-" + fill(date.getDate()) + " " + fill(date.getHours()) + ":" + fill(date.getMinutes()) + ":" + fill(date.getSeconds());
+    document.forms.form.game_time.value = date.getFullYear() + "-" + fill(date.getMonth() + 1) + "-" + fill(date.getDate()) + " " + fill(date.getHours()) + ":" + fill(date.getMinutes()) + ":" + fill(date.getSeconds()) ;
     e.preventDefault();
   });
   function fill(num) {

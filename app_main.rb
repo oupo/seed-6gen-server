@@ -77,24 +77,38 @@ post '/post' do
 end
 
 post '/answer' do
-  if /\A\d+\z/ !~ params[:id] || /\A[0-9a-f]{8}\z/ !~ params[:seed]
+  if /\A\d+\z/ !~ params[:id] || /\A([0-9a-f]{8}|notfound)\z/ !~ params[:seed]
     "ng"
   else
     id = params[:id].to_i
-    seed = params[:seed].to_i(16)
-    comments = Comment.where(id: id)
-    if comments.size != 1
-      "ng"
+    seed = params[:seed] == "notfound" ? :notfound : params[:seed].to_i(16)
+    pass = params[:pass]
+    if seed == :nofound && pass != ENV[:PASSWORD]
+      "require password"
     else
-      comment = comments[0]
-      iv0 = comment.iv0.scan(/\d+/).map(&:to_i)
-      iv1 = comment.iv1.scan(/\d+/).map(&:to_i)
-      if judge_answer(iv0, iv1, seed)
-        comment.answer = "%08x" % seed
-        comment.save
-        "ok"
+      comments = Comment.where(id: id)
+      if comments.size != 1
+        "ng"
       else
-        "incorrect"
+        comment = comments[0]
+        iv0 = comment.iv0.scan(/\d+/).map(&:to_i)
+        iv1 = comment.iv1.scan(/\d+/).map(&:to_i)
+        if seed != :notfound
+          if judge_answer(iv0, iv1, seed)
+            comment.answer = "%08x" % seed
+            comment.save
+            "ok"
+          else
+            "incorrect"
+          end
+        else
+          if comment.answer =~ /\A[0-9a-f]+\z/
+            "already answered"
+          else
+            comment.answer = "notfound"
+            comment.save
+          end
+        end
       end
     end
   end

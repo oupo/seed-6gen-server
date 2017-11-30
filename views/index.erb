@@ -7,7 +7,7 @@
 <body>
   <h1>seed-6gen</h1>
   <% @comments.each do |comment| %>
-    <p><%= escape_html "No.#{comment.id} 投稿時刻: #{comment.created_at} 起動時刻: #{comment.game_time} 個体値0: #{comment.iv0} 個体値1: #{comment.iv1} 見つかったseed: #{comment.answer or "未検索または見つからない"}" %></p>
+    <p><%= escape_html "No.#{comment.id} 投稿時刻: #{comment.created_at} 起動時刻: #{comment.game_time} 個体値0: #{comment.iv0} 個体値1: #{comment.iv1} 見つかったseed: #{comment.answer or "未検索"}" %></p>
   <% end %>
   <form action="/post" method="post" name="form">
   <p>起動時刻: <input type="text" name="game_time" value="2017-11-23 21:43:00"> <button id="current-time">現在時刻</button>
